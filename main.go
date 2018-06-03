@@ -7,12 +7,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/rs/xid"
-
 	"cloud.google.com/go/storage"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/labstack/gommon/log"
+	"github.com/rs/xid"
 	"github.com/spf13/viper"
 )
 
