@@ -136,7 +136,7 @@ func putDiagram(c echo.Context) error {
 	wc := bucket.Object(token).NewWriter(ctx)
 	wc.ContentType = "text/json"
 	wc.Metadata = map[string]string{
-		"write-token": tokenWrite,
+		"write-token": writeToken,
 	}
 
 	if _, err := io.Copy(wc, body); err != nil {

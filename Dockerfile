@@ -1,35 +1,32 @@
 #
 # Step 1: Build packages!
 #
-FROM golang:1.10.1-stretch as builder
+FROM golang:1.17.3-bullseye as builder
 
-# Cache external dependencies
-RUN go get cloud.google.com/go/storage \
- && go get github.com/labstack/echo \
- && go get github.com/labstack/echo/middleware \
- && go get github.com/labstack/gommon/log \
- && go get github.com/rs/xid \
- && go get github.com/spf13/viper
+WORKDIR /app
 
-WORKDIR /go/src/github.com/athene-wireframes/server
+COPY go.mod ./
+COPY go.sum ./
 
-COPY . .
+RUN go mod download
 
-RUN go get && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /build/server .
+COPY *.go ./
+
+RUN go build -o /build
 
 #
 # Step 2: Build runtime container
 #
-FROM alpine:latest
-
-RUN apk --no-cache --update add ca-certificates
+FROM gcr.io/distroless/base-debian10
 
 # Workdir for our app
-WORKDIR /app
+WORKDIR /
 
 # Copy from build stage
-COPY --from=builder /build/ .
+COPY --from=builder /build/ /build
 
 EXPOSE 4000
 
-ENTRYPOINT ["./server"]
+USER nonroot:nonroot
+
+ENTRYPOINT ["/build"]
