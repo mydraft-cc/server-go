@@ -127,13 +127,17 @@ func putDiagram(c echo.Context) error {
 		return c.String(http.StatusNotFound, "Not found")
 	}
 
-	storeToken := c.Param("writeToken")
+	writeToken := c.Param("writeToken")
 	// Check if the store token matchs the metadata of the object
-	if attrs.Metadata["write-token"] != storeToken {
+	if attrs.Metadata["write-token"] != writeToken {
 		return c.String(http.StatusForbidden, "Write token not valid")
 	}
 
 	wc := bucket.Object(token).NewWriter(ctx)
+	wc.ContentType = "text/json"
+	wc.Metadata = map[string]string{
+		"write-token": tokenWrite,
+	}
 
 	if _, err := io.Copy(wc, body); err != nil {
 		return err
