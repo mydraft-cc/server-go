@@ -1,4 +1,3 @@
 # Go Server
-Server for mydraft.cc
 
-Stores the files in a Google Cloud bucket
+Replaced by: https://github.com/mydraft-cc/server2
